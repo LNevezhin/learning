@@ -9,16 +9,16 @@
         </div>
       </div>
       <div>
-        <div v-for="(quest, index) in activeQuestCard" :key="index">
+        <div v-for="(quest, index) in activeQuestCard" :key="parseInt(index)">
           <div class="row mt-4">
             <div class="col-1 offset-md-4">
               <div class="badge badge-pill badge-danger">{{ index + 1}}</div>
             </div>
             <div class="col-3">
-              <input :ref="index" :id="index" type="text" class="form-control" v-bind:class="inputStatus[index]"
-                v-model.trim="inputData[index]" v-bind:disabled="inputStatus[index] == 'is-valid'"
-                @input="checkInput(index)" @focus="getFocus(index)" @blur="lostFocus(index)" autocomplete="off"
-                :tabindex="index">
+              <input :ref="parseInt(index)" :id="parseInt(index)" type="text" class="form-control"
+                v-bind:class="inputStatus[index]" v-model.trim="inputData[index]"
+                v-bind:disabled="inputStatus[index] == 'is-valid'" @input="checkInput(index)" @focus="getFocus(index)"
+                @blur="lostFocus(index)" autocomplete="off" :tabindex="index">
               <div class="valid-feedback">
                 Верно!
               </div>
@@ -28,7 +28,7 @@
             </div>
             <div class="col">
               <button type="button" class="btn btn-secondary" v-bind:class="{'sr-only':hintStatus[index] == false}"
-                @click=" giveLetter(index)">?</button>
+                @click="giveLetter(index)">?</button>
             </div>
 
           </div>
@@ -144,8 +144,10 @@
       },
 
       giveLetter: function (index) {
+        this.setFocus(index);
         this.inputData[index] = this.inputData[index] + this.activeQuestCard[index][this.indexInputLetters[index]];
         this.$forceUpdate();
+
         this.inputStatus[index] = '';
         this.correctInputLetters[index] = this.inputData[index];
         this.indexInputLetters[index] = this.indexInputLetters[index] + 1;
@@ -157,16 +159,18 @@
         this.nextStatusButton = !this.inputStatus.every(elem => elem == 'is-valid')
       },
 
-      setFocus: function () {
+      setFocus: function (item) {
         const id = this.inputStatus.findIndex(elem => elem != 'is-valid')
-        console.log('id: ', id);
-
-        if (id != -1) {
-          const input = document.getElementById(id);
-          input.focus()
+        if (id != -1 && this.inputStatus[item] != 'is-valid' && item != null) {
+          const input = document.getElementById(item);
+          input.focus();
         }
-        else {
-          const input = document.getElementById('next')
+        if (id != -1 && item == null) {
+          const input = document.getElementById(id);
+          input.focus();
+        }
+        if (id == -1) {
+          const input = document.getElementById('next');
           input.focus()
         }
       },
