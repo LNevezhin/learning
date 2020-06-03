@@ -2,16 +2,16 @@
   <div class="container" :key="activeCard">
     <div>
       <div class="row">
-        <div class="col-6 offset-md-3"><img :src="imageUrl"></div>
+        <div class="col-6 offset-3"><img :src="imageUrl"></div>
       </div>
       <div class="row">
-        <div class="col-6 offset-md-4 mt-4">
+        <div class="col-6 offset-4 mt-4">
         </div>
       </div>
       <div>
         <div v-for="(quest, index) in activeQuestCard" :key="parseInt(index)">
           <div class="row mt-4">
-            <div class="col-1 offset-md-4">
+            <div class="col-1 offset-4">
               <div class="badge badge-pill badge-danger">{{ index + 1}}</div>
             </div>
             <div class="col-3">
@@ -33,10 +33,9 @@
 
           </div>
         </div>
-        <div class="col-1 mb-4 offset-md-5 mt-3"><button id="next" type="button" class="btn btn-secondary"
+        <div class="col-1 mb-4 offset-5 mt-3"><button id="next" type="button" class="btn btn-secondary"
             v-bind:class="{'sr-only':nextStatusButton == true}" @click="getNextCard()">Далее</button></div>
       </div>
-
     </div>
   </div>
 </template>
@@ -59,7 +58,7 @@
         nextStatusButton: true,
         timerStopInput: [],
         timerFocusLost: [],
-        activeCard: 3, // номер текущей карточки, оно же ключ, для обновления ДОМ
+        activeCard: 0, // номер текущей карточки, оно же ключ, для обновления ДОМ
         ajaxApi: [["0", "pic0000.png", "ПоМиДоР", "КаПуСтА", "пЕрЕц", "БаКЛАЖан", "ЧЕСНОК"],
         ["1", "pic0001.png", "Москва", "Киев", "Минск", "Баку", "Ереван", "Тбилиси", "Алматы"],
         ["2", "pic0002.png", "КруГ", "КвадраТ", "ТреугольниК", "РомБ", "ТрапециЯ", "ЭллипС"],
@@ -108,6 +107,7 @@
         }
         if (this.inputData[index] == this.activeQuestCard[index].toLowerCase()) {
           this.inputStatus[index] = 'is-valid';
+          this.hintStatus[index] = false;
           this.setFocus();
         }
         if (this.errCount[index] == 3) {
@@ -182,11 +182,6 @@
         this.nextStatusButton = true;
         location.reload()
       }
-      /* Этот говно код не заработал, поэтому ппришлось еще говнее придумать:) */
-      /*getNextCard: function () {
-        this.activeCard = parseInt(this.activeCard) + 1;
-        this.$nextTick(() => { this.$forceUpdate(); })
-      } */
     }
   }
 </script>
