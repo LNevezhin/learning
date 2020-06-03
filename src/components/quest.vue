@@ -17,7 +17,8 @@
             <div class="col-3">
               <input :ref="index" :id="index" type="text" class="form-control" v-bind:class="inputStatus[index]"
                 v-model.trim="inputData[index]" v-bind:disabled="inputStatus[index] == 'is-valid'"
-                @input="checkInput(index)" @focus="getFocus(index)" @blur="lostFocus(index)" autocomplete="off">
+                @input="checkInput(index)" @focus="getFocus(index)" @blur="lostFocus(index)" autocomplete="off"
+                :tabindex="index">
               <div class="valid-feedback">
                 Верно!
               </div>
