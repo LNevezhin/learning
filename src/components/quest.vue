@@ -15,9 +15,9 @@
               <div class="badge badge-pill badge-danger">{{ index + 1}}</div>
             </div>
             <div class="col-3">
-              <input type="text" class="form-control" v-bind:class="inputStatus[index]" v-model.trim="inputData[index]"
-                v-bind:disabled="inputStatus[index] == 'is-valid'" @input="checkInput(index)" @focus="getFocus(index)"
-                @blur="lostFocus(index)" autocomplete="off">
+              <input :ref="index" :id="index" type="text" class="form-control" v-bind:class="inputStatus[index]"
+                v-model.trim="inputData[index]" v-bind:disabled="inputStatus[index] == 'is-valid'"
+                @input="checkInput(index)" @focus="getFocus(index)" @blur="lostFocus(index)" autocomplete="off">
               <div class="valid-feedback">
                 Верно!
               </div>
@@ -58,7 +58,7 @@
         nextStatusButton: false,
         timerStopInput: [],
         timerFocusLost: [],
-        activeCard: 2, // номер текущей карточки, оно же ключ, для обновления ДОМ
+        activeCard: 0, // номер текущей карточки, оно же ключ, для обновления ДОМ
         ajaxApi: [["0", "pic0000.png", "ПоМиДоР", "КаПуСтА", "пЕрЕц", "БаКЛАЖан", "ЧЕСНОК"],
         ["1", "pic0001.png", "Москва", "Киев", "Минск", "Баку", "Ереван", "Тбилиси", "Алматы"],
         ["2", "pic0002.png", "КруГ", "КвадраТ", "ТреугольниК", "РомБ", "ТрапециЯ", "ЭллипС"],
@@ -107,6 +107,7 @@
         }
         if (this.inputData[index] == this.activeQuestCard[index].toLowerCase()) {
           this.inputStatus[index] = 'is-valid';
+          this.setFocus();
         }
         if (this.errCount[index] == 3) {
           this.hintStatus[index] = 'true';
@@ -150,9 +151,18 @@
         if (this.inputData[index] == this.activeQuestCard[index].toLowerCase()) {
           this.inputStatus[index] = 'is-valid';
           this.hintStatus[index] = false;
+          this.setFocus();
         }
         this.nextStatusButton = !this.inputStatus.every(elem => elem == 'is-valid')
       },
+
+      setFocus: function () {
+        const id = this.inputStatus.findIndex(elem => elem != 'is-valid')
+        const input = document.getElementById(id);
+        console.log('input: ', input);
+        input.focus()
+      },
+
       getNextCard: function () {
         this.activeCard = parseInt(this.activeCard) + 1;
         if (this.activeCard == 4) this.activeCard = 0;

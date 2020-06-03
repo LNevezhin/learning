@@ -84,3 +84,8 @@ for (let i = 0; i < this.ajaxApi[this.activeCard].length - 2; i++) { /*
   this.activeQuestCard[i]=this.ajaxApi[this.activeCard][i + 2].toLowerCase(); */ this.hintStatus[i]=false;
   this.indexInputLetters[i]=0; this.inputStatus[i]='' ; this.errCount[i]=0; this.inputData[i]='' ;
   this.correctInputLetters[i]='' ; this.timerStopInput[i]=0; this.timerFocusLost[i]=0; } },
+
+
+  const el = this.$refs[item.id][0].$el;
+const input = el.querySelector('input');
+input.focus()
