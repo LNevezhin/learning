@@ -32,7 +32,7 @@
 
           </div>
         </div>
-        <div class="col-1 mb-4 offset-md-5 mt-3"><button type="button" class="btn btn-secondary"
+        <div class="col-1 mb-4 offset-md-5 mt-3"><button id="next" type="button" class="btn btn-secondary"
             v-bind:class="{'sr-only':nextStatusButton == true}" @click="getNextCard()">Далее</button></div>
       </div>
 
@@ -55,10 +55,10 @@
         errCount: [],
         delayStopInput: 5000,
         delayFocusLost: 3000,
-        nextStatusButton: false,
+        nextStatusButton: true,
         timerStopInput: [],
         timerFocusLost: [],
-        activeCard: 0, // номер текущей карточки, оно же ключ, для обновления ДОМ
+        activeCard: 3, // номер текущей карточки, оно же ключ, для обновления ДОМ
         ajaxApi: [["0", "pic0000.png", "ПоМиДоР", "КаПуСтА", "пЕрЕц", "БаКЛАЖан", "ЧЕСНОК"],
         ["1", "pic0001.png", "Москва", "Киев", "Минск", "Баку", "Ереван", "Тбилиси", "Алматы"],
         ["2", "pic0002.png", "КруГ", "КвадраТ", "ТреугольниК", "РомБ", "ТрапециЯ", "ЭллипС"],
@@ -158,9 +158,16 @@
 
       setFocus: function () {
         const id = this.inputStatus.findIndex(elem => elem != 'is-valid')
-        const input = document.getElementById(id);
-        console.log('input: ', input);
-        input.focus()
+        console.log('id: ', id);
+
+        if (id != -1) {
+          const input = document.getElementById(id);
+          input.focus()
+        }
+        else {
+          const input = document.getElementById('next')
+          input.focus()
+        }
       },
 
       getNextCard: function () {
