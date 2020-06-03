@@ -105,17 +105,17 @@
           this.errCount[index] = 0;
           this.correctInputLetters[index] = this.inputData[index];
         }
-
         if (this.inputData[index] == this.activeQuestCard[index].toLowerCase()) {
           this.inputStatus[index] = 'is-valid';
         }
         if (this.errCount[index] == 3) {
           this.hintStatus[index] = 'true';
         }
+        this.stopInput(index);
         this.nextStatusButton = !this.inputStatus.every(elem => elem == 'is-valid')
       },
 
-      getFocus: function (index) {
+      stopInput: function (index) {
         clearTimeout(this.timerStopInput[index]);
         this.timerStopInput[index] = setTimeout(() => {
           if (this.inputStatus[index] != 'is-valid') {
@@ -123,6 +123,10 @@
             this.$forceUpdate();
           }
         }, this.delayStopInput)
+      },
+
+      getFocus: function (index) {
+        this.stopInput(index);
         this.inputStatus[index] = '';
         clearTimeout(this.timerFocusLost[index]);
         this.$forceUpdate();
@@ -156,7 +160,7 @@
         this.nextStatusButton = true;
         location.reload()
       }
-      /* Этот говно код не заработал, поэтому пришлось еще говнее придумать:) */
+      /* Этот говно код не заработал, поэтому ппришлось еще говнее придумать:) */
       /*getNextCard: function () {
         this.activeCard = parseInt(this.activeCard) + 1;
         this.$nextTick(() => { this.$forceUpdate(); })
