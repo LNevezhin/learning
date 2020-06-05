@@ -2,55 +2,45 @@
   <div class="container" :key="activeCard">
     <div>
       <div id="empty">пустота</div>
-      <div v-for="(quest, index) in activeQuestCard" :key="parseInt(index)">
+      <div>
         <div class="row align-items-center">
-          <div class="col-1 offset-4">
-            <div class="badge badge-pill badge-danger">{{ index + 1 }}</div>
-          </div>
-          <div id="country" class="col">{{randomCountry[index]}}</div>
+          <div id="country" class="col">{{ randomCountry[0] }}</div>
         </div>
       </div>
       <div>
         <div id="empty">пустота</div>
-        <div class="row mt-4" v-for="(quest, index) in activeQuestCard" :key="parseInt(index)">
-          <div class="col-1 offset-4">
-            <div class="badge badge-pill badge-danger">{{ index + 1 }}</div>
-          </div>
+        <div
+          class="row"
+          v-for="(quest, index) in activeQuestCard"
+          :key="parseInt(index)"
+        >
+          <div class="col-4"></div>
           <div class="col-3">
             <input
               :ref="parseInt(index)"
               :id="parseInt(index)"
-              type="text"
-              class="form-control"
-              v-bind:class="inputStatus[index]"
-              v-model.trim="inputData[index]"
-              v-bind:disabled="inputStatus[index] == 'is-valid'"
-              @input="checkInput(index)"
-              @focus="getFocus(index)"
-              @blur="lostFocus(index)"
-              autocomplete="off"
+              type="radio"
+              name="radio"
+              :value="index"
+              v-model="picked"
+              class="is-valid"
             />
-            <div class="valid-feedback">Верно!</div>
-            <div class="invalid-feedback">Введите правильный ответ!</div>
+            {{ activeQuestCard[index] }}
           </div>
-          <div class="col">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              v-bind:class="{ 'sr-only': hintStatus[index] == false }"
-              @click="giveLetter(index)"
-            >?</button>
-          </div>
+          <div class="valid-feedback">Верно!</div>
+          <div class="invalid-feedback">Не верно!</div>
         </div>
       </div>
-      <div class="col-1 mb-4 offset-5 mt-3">
+      <div class="col-1">
         <button
           id="next"
           type="button"
           class="btn btn-secondary"
           v-bind:class="{ 'sr-only': nextStatusButton == true }"
           @click="getNextCard()"
-        >Далее</button>
+        >
+          Далее
+        </button>
       </div>
     </div>
     <div id="empty">пустота</div>
@@ -64,15 +54,15 @@ export default {
   data() {
     return {
       randomCountry: [],
+      value: [],
       activeQuestCard: [],
       inputData: [],
+      picked: "",
       correctInputLetters: [], // массив с правильно введенными буквами
       inputStatus: [],
       indexInputLetters: [], // индекс текущей буквы в correctInputLetters[]
       hintStatus: [],
       errCount: [],
-      delayStopInput: 5000,
-      delayFocusLost: 3000,
       nextStatusButton: true,
       timerStopInput: [],
       timerFocusLost: [],
@@ -300,32 +290,34 @@ export default {
         ["Майотта", "Мамудзу"],
         ["ЮАР", "Претория"],
         ["Замбия", "Лусака"],
-        ["Зимбабве", "Хараре"]
-      ]
+        ["Зимбабве", "Хараре"],
+      ],
     };
   },
 
   created() {
     this.activeUrl = this.ajaxApi[this.activeCard][1];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       this.randomCountryIndex[i] = Math.round(Math.random() * 222);
       this.activeQuestCard[i] = this.ajaxApi[
         this.randomCountryIndex[i]
-      ][1].toLowerCase();
+      ][1].toUpperCase();
       this.randomCountry[i] = this.ajaxApi[this.randomCountryIndex[i]][0];
-      this.hintStatus[i] = false;
-      this.indexInputLetters[i] = 0;
       this.inputStatus[i] = "";
       this.errCount[i] = 0;
       this.inputData[i] = "";
-      this.correctInputLetters[i] = "";
-      this.timerStopInput[i] = 0;
-      this.timerFocusLost[i] = 0;
     }
   },
 
   mounted: function() {
     this.setFocus();
+    this.radio = document.getElementsByName("radio");
+
+    for (let i = 0; i < 4; i++) {
+      console.log("this.radio[i]: ", this.radio[i]);
+      console.log("this.radio[i].cheked: ", this.radio[i].checked);
+      console.log("this.radio[i].value: ", this.radio[i].value);
+    }
   },
 
   methods: {
@@ -363,49 +355,8 @@ export default {
       if (this.errCount[index] == 3) this.hintStatus[index] = "true";
     },
 
-    setInputStatus: function(index, status) {
-      this.inputStatus[index] = status;
-    },
-
-    stopInput: function(index) {
-      clearTimeout(this.timerStopInput[index]);
-      this.timerStopInput[index] = setTimeout(() => {
-        if (this.inputStatus[index] != "is-valid") {
-          this.setInputStatus(index, "is-invalid");
-          this.$forceUpdate();
-        }
-      }, this.delayStopInput);
-    },
-
-    getFocus: function(index) {
-      this.stopInput(index);
-      this.setInputStatus(index, "");
-      clearTimeout(this.timerFocusLost[index]);
-      this.$forceUpdate();
-    },
-
-    lostFocus: function(index) {
-      this.timerFocusLost[index] = setTimeout(() => {
-        if (this.inputStatus[index] != "is-valid")
-          this.setInputStatus(index, "is-invalid");
-      }, this.delayFocusLost);
-      this.$forceUpdate();
-    },
-
-    giveLetter: function(index) {
-      this.setFocus(index);
-      this.inputData[index] =
-        this.inputData[index] +
-        this.activeQuestCard[index][this.indexInputLetters[index]];
-      this.totalLetters++;
-      this.$forceUpdate();
-      this.correctInputLetters[index] = this.inputData[index];
-      this.indexInputLetters[index] = this.indexInputLetters[index] + 1;
-      this.validCheck(index);
-    },
-
     setFocus: function(item) {
-      const id = this.inputStatus.findIndex(elem => elem != "is-valid");
+      const id = this.inputStatus.findIndex((elem) => elem != "is-valid");
       if (id != -1 && this.inputStatus[item] != "is-valid" && item != null) {
         const input = document.getElementById(item);
         input.focus();
@@ -437,8 +388,8 @@ export default {
       this.totalLetters; */
       this.nextStatusButton = true;
       location.reload();
-    }
-  }
+    },
+  },
 };
 </script>
 
