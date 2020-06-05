@@ -241,7 +241,7 @@ export default {
 
     getNextCard: function() {
       this.activeCard = parseInt(this.activeCard) + 1;
-      if (this.activeCard == 4) this.activeCard = 0;
+      if (this.activeCard == this.ajaxApi.length) this.activeCard = 0;
       sessionStorage.setItem("activeCard", this.activeCard);
       this.nextStatusButton = true;
       location.reload();
